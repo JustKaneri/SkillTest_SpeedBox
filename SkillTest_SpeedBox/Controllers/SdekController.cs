@@ -11,19 +11,20 @@ namespace SkillTest_SpeedBox.Controllers
     public class SdekController : Controller
     {
         private readonly IHttpSdek _repository;
-        private readonly IMapper _mapper;
 
-        public SdekController(IHttpSdek repository,IMapper mapper)
+        public SdekController(IHttpSdek repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         [HttpPost("calculator/tariff")]
         public async Task<IActionResult> GetPrice(OrderDTO orderDto)
         {
-            var order = _mapper.Map<Order>(orderDto);
+            Order order = new Order();
 
+            order.senderCityId = await _repository.GetCodeSity(orderDto.senderFias);
+            order.receiverCityId = await _repository.GetCodeSity(orderDto.receiverFias);
+            order.goods = orderDto.goods;
             order.version = "1.0";
             order.dateExecute = DateTime.Now.ToString("yyy-MM-dd");
             order.tariffId = 480;

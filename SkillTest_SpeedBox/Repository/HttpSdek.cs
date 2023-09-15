@@ -30,5 +30,21 @@ namespace SkillTest_SpeedBox.Repository
             
 
         }
+
+        public async Task<int> GetCodeSity(string fias)
+        {
+            HttpClient client = new HttpClient();
+
+            var result = await client.GetAsync(@"http://integration.cdek.ru/v1/location/cities/json?fiasGuid="+fias);
+
+            var resultObj = await result.Content.ReadAsStringAsync();
+
+            var sity = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(resultObj);
+
+            if (sity.Count == 0)
+                return -1;
+            
+            return int.Parse(sity[0]["cityCode"]);
+        }
     }
 }
